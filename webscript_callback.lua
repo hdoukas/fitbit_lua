@@ -58,7 +58,7 @@ function docheck()
 		storage.checked = false;
 		debug="time reset"
 	end
-	if isAlerted==true and not checked then
+	if isAlerted==true then
 		debug = "wemo switch control"
 		steps = check_fitbit()
 		if tonumber(steps[1])<threshold then
@@ -73,22 +73,25 @@ function docheck()
 			debug = "switch enabled"
 		end
 	else
-		if (time_zone > 18 and not storage.checked) then
-			debug = "checking with fitbit"
-			steps = check_fitbit()
-			if tonumber(steps[1])<threshold then
-				storage.alerted = true
-				alert.email("You need to move your @$$ today!")
-				debug = "checked below threshold"
-			else
-				storage.alerted = false
-				storage.checked = true
-				alert.email("Well done! "..tonumber(steps[1]).."steps so far today!")
-				debug = "well done today!"
-			end
+		if time_zone > 18 then
+			debug = "must check"
+			if not checked then
+				debug = "checking with fitbit"
+				steps = check_fitbit()
+				if tonumber(steps[1])<threshold then
+					storage.alerted = true
+					alert.email("You need to move your @$$ today!")
+					debug = "checked below threshold"
+				else
+					storage.alerted = false
+					storage.checked = true
+					alert.email("Well done! "..tonumber(steps[1]).." steps so far today!")
+					debug = "well done today!"
+				end
+			end	
 		else
-			debug = "already checked for today"
-		end
+				debug = "already checked for today"
+			end
 	end
 	steps = check_fitbit()
 	
