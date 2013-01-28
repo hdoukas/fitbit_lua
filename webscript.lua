@@ -23,8 +23,6 @@ function check_fitbit()
 	auth = { oauth = {
 			consumertoken = CONSUMERTOKEN,
 			consumersecret = CONSUMERSECRET,
-			--accesstoken = '86c1778f981fe910ef64fb41b2c5c045',
-			--tokensecret = 'efc03977109afb4a524903be50b41c26'
 			accesstoken = ACCESSTOKEN,
 			tokensecret = TOKENSECRET
 		}}
@@ -34,7 +32,7 @@ end
 
 function controlWemo(status, port) 
 	local response = http.request {
-		url = 'http://83.212.96.61:'..tonumber(port)..'/upnp/control/basicevent1',
+		url = 'http://IP_ADDRESS:'..tonumber(port)..'/upnp/control/basicevent1',
 		method = 'POST',
 		headers = { 
 			charset='utf-8', 
@@ -48,7 +46,7 @@ end
 
 function talkPusher(status)
 	local pusher = require('pusher')
-	local response = pusher.send(35559, 'KEY', 'SECRET', 'fitbit', 'fitbit', status)
+	local response = pusher.send(APP_ID, 'KEY', 'SECRET', 'fitbit', 'fitbit', status)
 end
 
 function docheck()
