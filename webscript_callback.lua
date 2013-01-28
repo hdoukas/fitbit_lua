@@ -23,8 +23,6 @@ function check_fitbit()
 	auth = { oauth = {
 			consumertoken = CONSUMERTOKEN,
 			consumersecret = CONSUMERSECRET,
-			--accesstoken = '86c1778f981fe910ef64fb41b2c5c045',
-			--tokensecret = 'efc03977109afb4a524903be50b41c26'
 			accesstoken = ACCESSTOKEN,
 			tokensecret = TOKENSECRET
 		}}
