@@ -88,10 +88,10 @@ function docheck()
 					alert.email("Well done! "..tonumber(steps[1]).." steps so far today!")
 					debug = "well done today!"
 				end
-			end	
-		else
+			else
 				debug = "already checked for today"
-			end
+			end	
+		end
 	end
 	steps = check_fitbit()
 	
