@@ -1,5 +1,6 @@
-local CONSUMERTOKEN = '394d22ddadec4639b3e1cafecd25400e'
-local CONSUMERSECRET = 'bf6b0045a1ce42cfa22e97745d2713cb'
+
+local CONSUMERTOKEN = 'FITBIT APP TOKEN'
+local CONSUMERSECRET = 'FITBIT APP KEY'
  
 -- get a request token
 local response = http.request {
@@ -8,107 +9,6 @@ local response = http.request {
 		'http://fitbit.webscript.io/callback' },
 	auth = { oauth = {
 			consumertoken = CONSUMERTOKEN,
-<<<<<<< HEAD
-			consumersecret = CONSUMERSECRET,
-			accesstoken = ACCESSTOKEN,
-			tokensecret = TOKENSECRET
-		}}
-}
-	return {json.parse(response.content).summary.steps}
-end
-
-function controlWemo(status, port) 
-	local response = http.request {
-		url = 'http://IP_ADDRESS:'..tonumber(port)..'/upnp/control/basicevent1',
-		method = 'POST',
-		headers = { 
-			charset='utf-8', 
-			SOAPACTION = '"urn:Belkin:service:basicevent:1#SetBinaryState"'
-		},
-		data = '<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:SetBinaryState xmlns:u="urn:Belkin:service:basicevent:1"><BinaryState>'..status..'</BinaryState></u:SetBinaryState></s:Body></s:Envelope>'
-	}
-
-	return response
-end
-
-function talkPusher(status)
-	local pusher = require('pusher')
-	local response = pusher.send(APP_ID, 'KEY', 'SECRET', 'fitbit', 'fitbit', status)
-end
-
-function docheck()
-	local time_zone = (tonumber(os.date("%H"))+2)
-	if time_zone < 18 then
-		checked = false
-		storage.checked = false;
-		debug="time reset"
-	end
-	if isAlerted==true and not checked then
-		debug = "wemo switch control"
-		steps = check_fitbit()
-		if tonumber(steps[1])<threshold then
-			--controlWemo(0, 5555)
-			debug="wemo must be off"
-		else
-			storage.alerted = false
-			storage.checked = true
-			--enable switch
-			--controlWemo(1, 5555)
-			alert.email("Well done mate!")
-			debug = "switch enabled"
-		end
-	else
-		if (time_zone > 18 and not storage.checked) then
-			debug = "checking with fitbit"
-			steps = check_fitbit()
-			if tonumber(steps[1])<threshold then
-				storage.alerted = true
-				alert.email("You need to move your @$$ today!")
-				debug = "checked below threshold"
-			else
-				storage.alerted = false
-				storage.checked = true
-				alert.email("Well done! "..tonumber(steps[1]).."steps so far today!")
-				debug = "well done today!"
-			end
-		else
-			debug = "already checked for today"
-		end
-	end
-	steps = check_fitbit()
-	
-	return isAlerted..":"..storage.checked..":"..steps[1]..":"..time_zone..":"..debug
-end
-
-
---main script execution starts here
-if ACCESSTOKEN==nil and TOKENSECRET==nil then
-	--get some credentials to work from fitbit
-	local response = http.request {
-	url='http://api.fitbit.com/oauth/access_token',
-	auth = { oauth = {
-			consumertoken = CONSUMERTOKEN,
-			consumersecret = CONSUMERSECRET,
-			accesstoken = request.query.oauth_token,
-			tokensecret = storage['secret:'..request.query.oauth_token],
-			verifier = request.query.oauth_verifier
-		}}
-	}
-	local ret = http.qsparse(response.content)
-	-- clean up
-	storage['secret:'..request.query.oauth_token] = nil
-
-	ACCESSTOKEN = ret.oauth_token
-	TOKENSECRET = ret.oauth_token_secret	
-	storage.accesstoken = ACCESSTOKEN
-	storage.tokensecret = TOKENSECRET
-	
-	return docheck()
-else
-	--got oauth credentials, let's check fitbit stats:
-	return docheck()
-end
-=======
 			consumersecret = CONSUMERSECRET
 		}}
 }
@@ -118,10 +18,9 @@ local ret = http.qsparse(response.content)
 -- store the token's secret for use in the callback
 storage['secret:'..ret.oauth_token] = ret.oauth_token_secret
  
--- redirect the user to login at Twitter
+-- redirect the user to login at Fitbit
 return 302, '', {
 	Location=
 	'http://api.fitbit.com/oauth/authorize?oauth_token='
 	..ret.oauth_token
 }
->>>>>>> added webscript initial script, renamed old one to callback
