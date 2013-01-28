@@ -1,15 +1,30 @@
-local CONSUMERTOKEN = '394d22ddadec4639b3e1cafecd25400e'
-local CONSUMERSECRET = 'bf6b0045a1ce42cfa22e97745d2713cb'
- 
--- get a request token
-local response = http.request {
-	url = 'http://api.fitbit.com/oauth/request_token',
-	params = { oauth_callback =
-		'http://fitbit.webscript.io/callback' },
+local CONSUMERTOKEN = '---'
+local CONSUMERSECRET = '---'
+
+local ACCESSTOKEN = storage.accesstoken or nil
+local TOKENSECRET = storage.tokensecret or nil
+
+local threshold = 2000 --steps threshold
+
+local debug = ""
+
+local isAlerted = storage.alerted or false
+local checked = storage.checked or false
+
+
+local date = os.date("%Y").."-"..os.date("%m").."-"..os.date("%d")
+
+local steps = {}
+steps[1] = 0
+
+function check_fitbit()
+	local response = http.request {
+	url='http://api.fitbit.com/1/user/23THB6/activities/date/'..date..'.json',
 	auth = { oauth = {
 			consumertoken = CONSUMERTOKEN,
-<<<<<<< HEAD
 			consumersecret = CONSUMERSECRET,
+			--accesstoken = '86c1778f981fe910ef64fb41b2c5c045',
+			--tokensecret = 'efc03977109afb4a524903be50b41c26'
 			accesstoken = ACCESSTOKEN,
 			tokensecret = TOKENSECRET
 		}}
@@ -19,7 +34,7 @@ end
 
 function controlWemo(status, port) 
 	local response = http.request {
-		url = 'http://IP_ADDRESS:'..tonumber(port)..'/upnp/control/basicevent1',
+		url = 'http://83.212.96.61:'..tonumber(port)..'/upnp/control/basicevent1',
 		method = 'POST',
 		headers = { 
 			charset='utf-8', 
@@ -33,7 +48,7 @@ end
 
 function talkPusher(status)
 	local pusher = require('pusher')
-	local response = pusher.send(APP_ID, 'KEY', 'SECRET', 'fitbit', 'fitbit', status)
+	local response = pusher.send(35559, 'KEY', 'SECRET', 'fitbit', 'fitbit', status)
 end
 
 function docheck()
@@ -108,20 +123,3 @@ else
 	--got oauth credentials, let's check fitbit stats:
 	return docheck()
 end
-=======
-			consumersecret = CONSUMERSECRET
-		}}
-}
- 
-local ret = http.qsparse(response.content)
- 
--- store the token's secret for use in the callback
-storage['secret:'..ret.oauth_token] = ret.oauth_token_secret
- 
--- redirect the user to login at Twitter
-return 302, '', {
-	Location=
-	'http://api.fitbit.com/oauth/authorize?oauth_token='
-	..ret.oauth_token
-}
->>>>>>> added webscript initial script, renamed old one to callback
