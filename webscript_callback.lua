@@ -11,8 +11,6 @@ local debug = ""
 local alerted = storage.alerted or "false"
 local checked = storage.checked or "false"
 
-
-
 local date = os.date("%Y").."-"..os.date("%m").."-"..os.date("%d")
 
 local steps = {}
