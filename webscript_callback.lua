@@ -8,8 +8,9 @@ local threshold = 2000 --steps threshold
 
 local debug = ""
 
-local isAlerted = storage.alerted or false
-local checked = storage.checked or false
+local alerted = storage.alerted or "false"
+local checked = storage.checked or "false"
+
 
 
 local date = os.date("%Y").."-"..os.date("%m").."-"..os.date("%d")
@@ -52,19 +53,23 @@ end
 function docheck()
 	local time_zone = (tonumber(os.date("%H"))+2)
 	if time_zone < 18 then
-		checked = false
-		storage.checked = false;
-		debug="time reset"
+		storage.alerted = "false"
+		storage.checked = "false"
+		alerted = "false"
+		checked = "false"
+		debug="will check later today..."
 	end
-	if isAlerted==true then
+	if alerted=="true" then
 		debug = "wemo switch control"
 		steps = check_fitbit()
 		if tonumber(steps[1])<threshold then
 			--controlWemo(0, 5555)
 			debug="wemo must be off"
 		else
-			storage.alerted = false
-			storage.checked = true
+			storage.alerted = "false"
+			storage.checked = "true"
+			checked = "true"
+			alerted = "false"
 			--enable switch
 			--controlWemo(1, 5555)
 			alert.email("Well done mate!")
@@ -73,16 +78,16 @@ function docheck()
 	else
 		if time_zone > 18 then
 			debug = "must check"
-			if not checked then
+			if checked=="false" then
 				debug = "checking with fitbit"
 				steps = check_fitbit()
 				if tonumber(steps[1])<threshold then
-					storage.alerted = true
+					storage.alerted = "true"
 					alert.email("You need to move your @$$ today!")
 					debug = "checked below threshold"
 				else
-					storage.alerted = false
-					storage.checked = true
+					storage.alerted = "false"
+					storage.checked = "true"
 					alert.email("Well done! "..tonumber(steps[1]).." steps so far today!")
 					debug = "well done today!"
 				end
